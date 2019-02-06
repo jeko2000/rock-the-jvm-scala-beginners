@@ -1,5 +1,5 @@
 package playground
 
-object ScalaPlayground extends App{
+object ScalaPlayground {
   println("Hello, Scala!")
 }
