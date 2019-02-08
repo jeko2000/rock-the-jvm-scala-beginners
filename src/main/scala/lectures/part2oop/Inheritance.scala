@@ -1,6 +1,6 @@
 package lectures.part2oop
 
-object InheritanceAndTraits {
+object Inheritance {
 
   class Animal {
     val creatureType = "wild"
