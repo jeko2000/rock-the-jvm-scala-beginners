@@ -1,36 +1,43 @@
 package exercises
 
-// This is my first implementation
-abstract class JMyList {
-  def head: Integer
-  def tail: JMyList
+abstract class JMyList[+A] {
+  def head: A
+  def tail: JMyList[A]
   def isEmpty: Boolean
-  def add(n: Integer): JMyList
-  override def toString: String
+  def add[B >: A](b: B): JMyList[B]
+  def printElements: String
+  override def toString: String = "[" + printElements + "]"
 }
 
-class JNode(h: Integer = null, t: JMyList = null) extends JMyList {
-  def head: Integer = this.h
-  def tail: JMyList = this.t
-  def isEmpty: Boolean = (h == null)
-  def add(n: Integer): JMyList = new JNode(n, this)
-  override def toString: String = {
-    def loop(list: JMyList, acc: String): String =
-      if (list isEmpty) acc + " "
-      else loop(list.tail, acc + " " + list.head)
-    "[" + loop(this, "") + "]"
-  }
+object JEmpty extends JMyList[Nothing] {
+  def head: Nothing = throw new NoSuchElementException
+  def tail: JMyList[Nothing] = throw new NoSuchElementException
+  def isEmpty: Boolean = true
+  def add[B >: Nothing](b: B): JMyList[B] = new JCons[B](b, this)
+  def printElements: String = ""
+}
+
+class JCons[+A](h: A, t: JMyList[A]) extends JMyList[A] {
+  def head: A = h
+  def tail: JMyList[A] = t
+  def isEmpty: Boolean = false
+  def add[B >: A](b: B): JMyList[B] = new JCons[B](b, this)
+  def printElements: String =
+    if (t.isEmpty) "" + h
+    else h.toString + " " + t.printElements
 }
 
 object JListTest {
-  // Empty test
-  val emptyList:JMyList = new JNode
-  val list1: JMyList = (new JNode()).add(3).add(2).add(1)
+  val listOfInts = new JCons[Int](1, new JCons[Int](2, new JCons[Int](3, JEmpty)))
+  println(listOfInts.tail.head)
+  println(listOfInts.add(4).head)
+  println(listOfInts.isEmpty)
+  println(listOfInts.toString)
 
-  println(emptyList)
-  println(emptyList.isEmpty)
-  println(list1)
-  println(list1.isEmpty)
-  println(list1.head)
-  println(list1.tail)
+  val listOfStrings = new JCons("a", new JCons("b", new JCons("c", JEmpty)))
+  println(listOfStrings.tail.head)
+  println(listOfStrings.add("d").head)
+  println(listOfStrings.isEmpty)
+  println(listOfStrings.toString)
+
 }
