@@ -13,7 +13,7 @@ abstract class JMyList[+A] {
   override def toString: String = "[" + printElements + "]"
 }
 
-object JEmpty extends JMyList[Nothing] {
+case object JEmpty extends JMyList[Nothing] {
   def head: Nothing = throw new NoSuchElementException
   def tail: JMyList[Nothing] = throw new NoSuchElementException
   def isEmpty: Boolean = true
@@ -25,7 +25,7 @@ object JEmpty extends JMyList[Nothing] {
   def printElements: String = ""
 }
 
-class JCons[+A](h: A, t: JMyList[A]) extends JMyList[A] {
+case class JCons[+A](h: A, t: JMyList[A]) extends JMyList[A] {
   def head: A = h
   def tail: JMyList[A] = t
   def isEmpty: Boolean = false
