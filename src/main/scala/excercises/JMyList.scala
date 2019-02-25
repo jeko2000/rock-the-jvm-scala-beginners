@@ -57,16 +57,10 @@ object JListTest {
   println(listOfStrings.isEmpty)
   println(listOfStrings.toString)
 
-  println(listOfInts.filter(new Function1[Int, Boolean] {
-    override def apply(n: Int) = n % 2 == 0
-  }))
+  println(listOfInts.filter(_ % 2 == 0))
 
-  println(listOfStrings.map(new Function1[String, String] {
-    override def apply(s: String) = s + s
-  }))
+  println(listOfStrings.map((x: String) => x + x))
 
-  println(listOfStrings.flatmap(new Function1[String, JMyList[String]] {
-    override def apply(s: String) = JEmpty.add(s).add(s).add(s)
-  }))
+  println(listOfStrings.flatmap((s: String) => JEmpty.add(s).add(s).add(s)))
 
 }
