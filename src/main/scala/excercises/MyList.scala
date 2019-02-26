@@ -118,4 +118,9 @@ object ListTest {
   println(anotherListOfIntegers.zipWith[String, String](listOfStrings, _ + "-" + _))
   println(listOfIntegers.fold(0)(_ + _))
 
+  // for comprehensions
+  /* val combinations = for {
+   *   n <- listOfIntegers
+   *   string <- listOfStrings
+   * } yield n + "-" + string */
 }
