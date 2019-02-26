@@ -11,6 +11,12 @@ abstract class JMyList[+A] {
   def flatmap[B](transformer: Function1[A, JMyList[B]]): JMyList[B]
   def printElements: String
   override def toString: String = "[" + printElements + "]"
+
+  def foreach(f: A => Unit): Unit
+  def sort(f: (A, A) => Int): JMyList[A]
+  def zipWith[B, C](list: JMyList[B], f: (A, B) => C): JMyList[C]
+  def fold[B](s: B)(f: (B, A)=> B): B
+
 }
 
 case object JEmpty extends JMyList[Nothing] {
@@ -23,6 +29,12 @@ case object JEmpty extends JMyList[Nothing] {
   def concat[B >: Nothing](list: JMyList[B]): JMyList[B] = list
   def flatmap[B](transformer: Function1[Nothing, JMyList[B]]): JMyList[B] = JEmpty
   def printElements: String = ""
+
+  def foreach(f: Nothing => Unit): Unit = ()
+  def sort(f: (Nothing, Nothing) => Int): JMyList[Nothing] = JEmpty
+  def zipWith[B, C](list: JMyList[B], f: (Nothing, B) => C): JMyList[C] = JEmpty
+  def fold[B](s: B)(f: (B, Nothing)=> B): B = s
+
 }
 
 case class JCons[+A](h: A, t: JMyList[A]) extends JMyList[A] {
@@ -42,10 +54,31 @@ case class JCons[+A](h: A, t: JMyList[A]) extends JMyList[A] {
   def printElements: String =
     if (t.isEmpty) "" + h
     else h.toString + " " + t.printElements
+
+  def foreach(f: A => Unit): Unit = {
+    f(h)
+    t.foreach(f)
+  }
+
+  def sort(comp: (A, A) => Int): JMyList[A] = {
+    val split: A = h
+    val left: JMyList[A] = t.filter(comp(_, h) < 0)
+    val right: JMyList[A] = t.filter(comp(_, h) >= 0)
+
+    left.sort(comp) concat new JCons(h, JEmpty) concat right.sort(comp)
+  }
+
+  def zipWith[B, C](list: JMyList[B], f: (A, B) => C): JMyList[C] =
+    if (list.isEmpty) JEmpty
+    else new JCons(f(h, list.head), t.zipWith(list.tail, f))
+
+  def fold[B](s: B)(f: (B, A)=> B): B =
+    t.fold(f(s, h))(f)
 }
 
 object JListTest {
   val listOfInts = new JCons[Int](1, new JCons[Int](2, new JCons[Int](3, JEmpty)))
+  val listOfOtherInts = JEmpty.add(2).add(10).add(-1).add(3).add(100).add(-20)
   println(listOfInts.tail.head)
   println(listOfInts.add(4).head)
   println(listOfInts.isEmpty)
@@ -62,5 +95,14 @@ object JListTest {
   println(listOfStrings.map((x: String) => x + x))
 
   println(listOfStrings.flatmap((s: String) => JEmpty.add(s).add(s).add(s)))
+
+  listOfStrings.foreach(println)
+
+  println(listOfInts.sort((x, y)=> y - x))
+  println(listOfOtherInts.sort(-_ + _))
+
+  println(listOfInts.zipWith(listOfInts, (x: Int, y: Int) => x + y))
+  println(listOfInts.zipWith(listOfOtherInts, (x: Int, y: Int) => x + y))
+  println(listOfInts.fold(1)(_ + _))
 
 }
