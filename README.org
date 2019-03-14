@@ -1,0 +1,5 @@
+* Rock the jvm scala beginners
+
+This contains the code present in the [[https://www.udemy.com/rock-the-jvm-scala-for-beginners/][Rock the JVM's Scala beginners course]] by Daniel Ciocîrlan together with my solutions to the problems posted.
+
+In short, Daniel has a well-paced style and is thoroughly knowledgeable on the [[https://www.scala-lang.org/][Scala]] language. I am happy to have chosen this course as my introduction to Scala.
